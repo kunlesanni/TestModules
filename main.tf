@@ -1,3 +1,7 @@
+provider "azurerm" {
+  features {}
+}
+
 data "azurerm_subnet" "subnetdata" {
   name                 = var.subnetdata
   virtual_network_name = var.vnetdata
