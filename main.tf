@@ -1,11 +1,3 @@
-provider "azurerm" {
-  features {}
-  subscription_id = "39fb3caa-1f49-4a1b-8b9e-d9394c3999be"
-  tenant_id       = "1faf88fe-a998-4c5b-93c9-210a11d9a5c2"
-  client_id       = "4ffac8cc-8384-4ee3-9641-8ac25bcc0ca6"
-  client_secret   = "RQ67Q~Fso~Is1uhGUv4QdyLP3R9K~6OYHEGS6"
-}
-
 data "azurerm_subnet" "subnetdata" {
   name                 = var.subnetdata
   virtual_network_name = var.vnetdata
