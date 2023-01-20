@@ -103,7 +103,7 @@ resource "azurerm_virtual_machine_extension" "lgpo" {
     {
         "fileUris": ["https://stgisdiaasimgdev.blob.core.windows.net/iaasimages/LgpoDisksCleanup.ps1"],
 
-        "commandToExecute": "powershell -ExecutionPolicy Unrestricted -file LGPOandPage.ps1"
+        "commandToExecute": "powershell -ExecutionPolicy Unrestricted -file LgpoDisksCleanup.ps1"
 
         }   
 SETTINGS
