@@ -1,6 +1,6 @@
-provider "azurerm" {
-  features {}
-}
+# provider "azurerm" {
+#   features {}
+# }
 
 data "azurerm_subnet" "subnetdata" {
   name                 = var.subnetdata
