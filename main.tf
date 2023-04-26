@@ -101,9 +101,9 @@ resource "azurerm_virtual_machine_extension" "lgpo" {
 
   settings = <<SETTINGS
     {
-        "fileUris": ["https://stgisdiaasimgdev.blob.core.windows.net/iaasimages/gold_image_extn.ps1.ps1"],
+        "fileUris": ["https://stgisdiaasimgdev.blob.core.windows.net/iaasimages/gold_image_extn.ps1"],
 
-        "commandToExecute": "powershell -ExecutionPolicy Unrestricted -file gold_image_extn.ps1.ps1"
+        "commandToExecute": "powershell -ExecutionPolicy Unrestricted -file gold_image_extn.ps1"
 
         }   
 SETTINGS
