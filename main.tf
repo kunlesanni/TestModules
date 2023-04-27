@@ -80,6 +80,12 @@ resource "azurerm_virtual_machine" "vm-windows" {
   os_profile_windows_config {
     provision_vm_agent = true
   }
+  
+  lifecycle {
+    ignore_changes = [
+      tags,
+    ]
+  
 }
 
 resource "azurerm_availability_set" "avset" {
