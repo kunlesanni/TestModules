@@ -1,8 +1,8 @@
-module "WinVM" {
+module "mimWebAppDB" {
   source = "git::https://github.com/Kunlesanni/TestModules"
   # version = "v2.0.0"
   nb_instances  = 1
-  nb_data_disk  = 3
+  nb_data_disk  = 2
   vm_hostname   = "mimWebAppDB01u"
   rgdata        = "rg-236-MIM-Nonprod"
   vm_size       = "Standard_B2ms"
