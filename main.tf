@@ -32,6 +32,14 @@ resource "azurerm_network_interface" "nic" {
     subnet_id                     = data.azurerm_subnet.subnetdata.id
     private_ip_address_allocation = "Dynamic"
   }
+      ignore_changes = [
+      tags,
+    ]
+    lifecycle {
+    ignore_changes = [
+      tags,
+    ]
+    }
 }
 
 resource "azurerm_virtual_machine" "vm-windows" {
@@ -64,6 +72,15 @@ resource "azurerm_virtual_machine" "vm-windows" {
     disk_size_gb      = 127
   }
 
+  storage_data_disk{
+    name              = "${var.vm_hostname}${count.index + 1}-defaultdatadisk${storage_data_disk.value + 1}"
+    disk_size_gb      = 10
+    create_option     = "Empty"
+    caching           = "ReadWrite"
+    managed_disk_type = "Standard_LRS"
+    lun               = storage_data_disk.value + 4
+  }
+    
   dynamic "storage_data_disk" {
     for_each = range(var.nb_data_disk)
     content {
@@ -95,6 +112,9 @@ resource "azurerm_availability_set" "avset" {
   platform_fault_domain_count  = 2
   platform_update_domain_count = 6
   managed                      = true
+      ignore_changes = [
+      tags,
+    ]
 }
 
 resource "azurerm_virtual_machine_extension" "lgpo" {
