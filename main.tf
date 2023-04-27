@@ -72,7 +72,7 @@ resource "azurerm_virtual_machine" "vm-windows" {
     disk_size_gb      = 127
   }
 
-  storage_data_disk{
+  storage_data_disk {
     name              = "${var.vm_hostname}${count.index + 1}-defaultdatadisk${storage_data_disk.value + 1}"
     disk_size_gb      = 10
     create_option     = "Empty"
