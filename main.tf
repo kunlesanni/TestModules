@@ -88,7 +88,7 @@ resource "azurerm_virtual_machine" "vm-windows" {
       name              = "${var.vm_hostname}${count.index + 1}-datadisk${storage_data_disk.value + 1}"
       create_option     = "Empty"
       lun               = storage_data_disk.value + 5
-      disk_size_gb      = 10
+      disk_size_gb      = var.disk_size_gb
       caching           = "ReadWrite"
       managed_disk_type = "Standard_LRS"
     }
