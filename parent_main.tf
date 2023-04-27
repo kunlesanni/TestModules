@@ -1,23 +1,23 @@
 module "WinVM" {
   source = "git::https://github.com/Kunlesanni/TestModules"
   # version = "v2.0.0"
-  nb_instances  = 5
+  nb_instances  = 1
   nb_data_disk  = 3
-  vm_hostname   = "azw22b"
-  rgdata        = "rg-998-TEST-Nonprod"
-  vm_size       = "Standard_DS2_v2"
+  vm_hostname   = "mimWebAppDB01u"
+  rgdata        = "rg-236-MIM-Nonprod"
+  vm_size       = "Standard_B2ms"
   Imgdefinition = "ISDWindowsServer2022"
   tags = {
     Terraform       = "True"
-    Environment     = "Non Production"
-    "SID-SSN"       = "998-Test"
-    RequestedBy     = "Olakunle Sanni"
+    Environment     = "uat"
+    "SID-SSN"       = "236-MIM"
+    RequestedBy     = "Daniel Lim"
     "Request Date"  = formatdate("DD MMM YYYY", timestamp())
-    "Budget Code"   = "123456.123.123456"
-    "Budget Owner"  = "ccaeosa@ucl.ac.uk"
-    "Business Unit" = "Test Services"
+    "Budget Code"   = "504946.100.156780"
+    "Budget Owner"  = "ccaepur@ucl.ac.uk"
+    "Business Unit" = "Infrastructure Applications & Services"
     Backup          = "Daily"
     Version         = "2"
-    autostartstop   = "Work Week (9am - 5pm)"
+    autostartstop   = "Extended Work Week (8am - 7pm)"
   }
 }
