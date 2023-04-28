@@ -1,6 +1,15 @@
-# provider "azurerm" {
-#   features {}
-# }
+terraform {
+  required_providers {
+    azurerm = {
+      source = "hashicorp/azurerm"
+      version = "3.53.0"
+    }
+  }
+}
+
+locals {
+  vm_name = "vm-${var.vm_hostname}"
+}
 
 data "azurerm_subnet" "subnetdata" {
   name                 = var.subnetdata
@@ -22,29 +31,28 @@ data "azurerm_key_vault_secret" "vmpwd" {
 
 resource "azurerm_network_interface" "nic" {
   count                         = var.nb_instances
-  name                          = "${var.vm_hostname}${count.index}-nic"
+  name                          = "${local.vm_name}${count.index}-nic"
   resource_group_name           = var.rgdata
   location                      = var.location
   enable_accelerated_networking = false
 
   ip_configuration {
-    name                          = "${var.vm_hostname}${count.index}-ipconfig"
+    name                          = "${local.vm_name}${count.index}-ipconfig"
     subnet_id                     = data.azurerm_subnet.subnetdata.id
     private_ip_address_allocation = "Dynamic"
   }
-      ignore_changes = [
-      tags,
-    ]
-    lifecycle {
+  tags = var.tags
+  lifecycle {
     ignore_changes = [
       tags,
     ]
-    }
+  }
+  
 }
 
 resource "azurerm_virtual_machine" "vm-windows" {
   count                            = var.nb_instances
-  name                             = "${var.vm_hostname}-${count.index + 1}.addev.ucl.ac.uk"
+  name                             = "${local.vm_name}${count.index}"
   resource_group_name              = var.rgdata
   location                         = var.location
   availability_set_id              = azurerm_availability_set.avset.id
@@ -59,33 +67,33 @@ resource "azurerm_virtual_machine" "vm-windows" {
   }
 
   os_profile {
-    computer_name  = "vm-${var.vm_hostname}${count.index + 1}"
+    computer_name  = "${local.vm_name}${count.index}"
     admin_username = var.admin_username
     admin_password = data.azurerm_key_vault_secret.vmpwd.value
   }
 
   storage_os_disk {
-    name              = "${var.vm_hostname}${count.index}-osdisk"
+    name              = "${local.vm_name}${count.index}-osdisk"
     create_option     = "FromImage"
     caching           = "ReadWrite"
     managed_disk_type = "Standard_LRS"
     disk_size_gb      = 127
   }
 
-  storage_data_disk {
-    name              = "${var.vm_hostname}${count.index + 1}-defaultdatadisk${storage_data_disk.value + 1}"
+  storage_data_disk{
+    name              = "${local.vm_name}${count.index}-defaultdatadisk"
     disk_size_gb      = 10
     create_option     = "Empty"
     caching           = "ReadWrite"
     managed_disk_type = "Standard_LRS"
-    lun               = storage_data_disk.value + 4
+    lun               = 4
   }
     
   dynamic "storage_data_disk" {
     for_each = range(var.nb_data_disk)
     content {
       # name              = "${var.vm_hostname}-datadisk${storage_data_disk.value+1}"
-      name              = "${var.vm_hostname}${count.index + 1}-datadisk${storage_data_disk.value + 1}"
+      name              = "${local.vm_name}${count.index}-datadisk${storage_data_disk.value + 1}"
       create_option     = "Empty"
       lun               = storage_data_disk.value + 5
       disk_size_gb      = var.disk_size_gb
@@ -97,12 +105,13 @@ resource "azurerm_virtual_machine" "vm-windows" {
   os_profile_windows_config {
     provision_vm_agent = true
   }
-  
+
   lifecycle {
     ignore_changes = [
       tags,
     ]
-  
+  }
+
 }
 
 resource "azurerm_availability_set" "avset" {
@@ -112,9 +121,13 @@ resource "azurerm_availability_set" "avset" {
   platform_fault_domain_count  = 2
   platform_update_domain_count = 6
   managed                      = true
-      ignore_changes = [
+  tags                         = var.tags
+
+  lifecycle {
+    ignore_changes = [
       tags,
     ]
+  }
 }
 
 resource "azurerm_virtual_machine_extension" "lgpo" {
@@ -133,6 +146,15 @@ resource "azurerm_virtual_machine_extension" "lgpo" {
 
         }   
 SETTINGS
+
+tags                   = var.tags
+
+  lifecycle {
+    ignore_changes = [
+      tags,
+    ]
+  }
+
 }
 
 # Working domjoi, need to merge into single script with lgpo?
