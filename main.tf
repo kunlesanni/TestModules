@@ -31,13 +31,13 @@ data "azurerm_key_vault_secret" "vmpwd" {
 
 resource "azurerm_network_interface" "nic" {
   count                         = var.nb_instances
-  name                          = "${local.vm_name}${count.index}-nic"
+  name                          = "${local.vm_name}${count.index + 1}-nic"
   resource_group_name           = var.rgdata
   location                      = var.location
   enable_accelerated_networking = false
 
   ip_configuration {
-    name                          = "${local.vm_name}${count.index}-ipconfig"
+    name                          = "${local.vm_name}${count.index + 1}-ipconfig"
     subnet_id                     = data.azurerm_subnet.subnetdata.id
     private_ip_address_allocation = "Dynamic"
   }
@@ -52,7 +52,7 @@ resource "azurerm_network_interface" "nic" {
 
 resource "azurerm_virtual_machine" "vm-windows" {
   count                            = var.nb_instances
-  name                             = "${local.vm_name}${count.index}"
+  name                             = "${local.vm_name}${count.index + 1}"
   resource_group_name              = var.rgdata
   location                         = var.location
   availability_set_id              = azurerm_availability_set.avset.id
@@ -67,13 +67,13 @@ resource "azurerm_virtual_machine" "vm-windows" {
   }
 
   os_profile {
-    computer_name  = "${local.vm_name}${count.index}"
+    computer_name  = "${local.vm_name}${count.index + 1}"
     admin_username = var.admin_username
     admin_password = data.azurerm_key_vault_secret.vmpwd.value
   }
 
   storage_os_disk {
-    name              = "${local.vm_name}${count.index}-osdisk"
+    name              = "${local.vm_name}${count.index + 1}-osdisk"
     create_option     = "FromImage"
     caching           = "ReadWrite"
     managed_disk_type = "Standard_LRS"
@@ -81,7 +81,7 @@ resource "azurerm_virtual_machine" "vm-windows" {
   }
 
   storage_data_disk{
-    name              = "${local.vm_name}${count.index}-defaultdatadisk"
+    name              = "${local.vm_name}${count.index + 1}-defaultdatadisk"
     disk_size_gb      = 10
     create_option     = "Empty"
     caching           = "ReadWrite"
@@ -93,7 +93,7 @@ resource "azurerm_virtual_machine" "vm-windows" {
     for_each = range(var.nb_data_disk)
     content {
       # name              = "${var.vm_hostname}-datadisk${storage_data_disk.value+1}"
-      name              = "${local.vm_name}${count.index}-datadisk${storage_data_disk.value + 1}"
+      name              = "${local.vm_name}${count.index + 1}-datadisk${storage_data_disk.value + 1}"
       create_option     = "Empty"
       lun               = storage_data_disk.value + 5
       disk_size_gb      = var.disk_size_gb
